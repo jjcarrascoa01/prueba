@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHCP: Protocolo de Configuración Dinámica de Host</title>
+    <style>
+        body {
+            font-family: 'Verdana', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        .header-main {
+            background-color: #007bff;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header-main h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            max-width: 1200px;
+            margin: 20px auto;
+            gap: 20px;
+            padding: 0 20px;
+        }
+        .sidebar {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+        .content {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .sidebar h2 {
+            color: #007bff;
+            font-size: 1.2em;
+            margin-top: 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar li {
+            margin-bottom: 8px;
+        }
+        .sidebar a {
+            text-decoration: none;
+            color: #0056b3;
+            font-weight: 500;
+            display: block;
+            padding: 3px 0;
+        }
+        .sidebar a:hover {
+            color: #007bff;
+            text-decoration: underline;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            font-size: 1.6em;
+        }
+        h3 {
+            color: #0056b3;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .card {
+            background-color: #f8f9fa;
+            border-left: 5px solid #007bff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+        }
+        /* Estilo para simular diagramas */
+        .diagram-flow {
+            border: 1px solid #00bcd4;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background-color: #e0f7fa;
+        }
+        .flow-step {
+            padding: 5px 0;
+            border-bottom: 1px dashed #4dd0e1;
+            display: flex;
+            align-items: center;
+        }
+        .flow-step:last-child {
+            border-bottom: none;
+        }
+        .flow-step b { /* Se usa b para el nombre del mensaje */
+            color: #00796b;
+            margin-right: 10px;
+            width: 150px;
+            flex-shrink: 0;
+        }
+        .flow-role {
+            background-color: #0056b3;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-right: 10px;
+        }
+        .key-list {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header-main">
+        <h1>Protocolo de Configuración Dinámica de Host (<b>DHCP</b>)</h1>
+        <p>Estándar TCP/IP que simplifica la administración de la configuración IP haciéndola automática.</p>
+    </header>
+
+    <div class="layout-grid">
+        <aside class="sidebar">
+            <h2>Índice</h2>
+            <ul>
+                <li><a href="#intro">1. Introducción y Arquitectura</a></li>
+                <li><a href="#ipv4">2. Funcionamiento DHCPv4: Proceso DORA</a></li>
+                <li><a href="#admin">3. Métodos y Conceptos</a></li>
+                <li><a href="#dhcpv6">4. DHCP para IPv6 (DHCPv6)</a></li>
+                <li><a href="#seguridad">5. DHCP Relay, Seguridad y Redundancia</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+
+            <section id="intro">
+                <h2>1. Introducción y Arquitectura</h2>
+                <p>La principal función de <b>DHCP</b> es asignar direcciones IP y otros parámetros de configuración de forma dinámica a los dispositivos, en contraste con el direccionamiento estático manual. Si un cliente no encuentra un servidor <b>DHCP</b>, no podrá conectarse a la red.</p>
+
+                <div class="card">
+                    <h3>Parámetros de Configuración Proporcionados</h3>
+                    <p>El servidor <b>DHCP</b> debe proporcionar al cliente al menos:</p>
+                    <ul>
+                        <li><b>Dirección IP</b>.</li>
+                        <li><b>Máscara de subred</b>.</li>
+                    </ul>
+                    <p>Opcionalmente puede proporcionar: Puerta de enlace, Servidores DNS y otros parámetros.</p>
+                </div>
+
+                <h3>Componentes Clave de <b>DHCP</b></h3>
+                <ul class="key-list card">
+                    <li><b>Servidor DHCP</b>: Dispositivo que contiene un <b>pool</b> de direcciones IP para asignar automáticamente.</li>
+                    <li><b>Cliente DHCP</b>: Cualquier dispositivo IP que solicita parámetros de configuración.</li>
+                    <li><b>Agente de Retransmisión DHCP (DHCP Relay Agent)</b>: Pasa mensajes <b>DHCP</b> entre servidores y clientes cuando el servidor no está en la misma subred IP que sus clientes. Esto es vital porque los <b>routers</b> no propagan el <b>broadcast</b> del cliente a otras redes. Para que el agente de retransmisión funcione, debe definirse la dirección del servidor <b>DHCP</b> como destino de retransmisión en la interfaz del <b>router</b>.</li>
+                </ul>
+                
+                <p>El uso de <b>DHCP</b> minimiza los errores de configuración causados por la asignación manual y los conflictos de direcciones repetidas, además de mantener una <b>administración centralizada</b>.</p>
+            </section>
+
+            <section id="ipv4">
+                <h2>2. Funcionamiento DHCPv4: Proceso DORA</h2>
+                <p>La comunicación entre cliente y servidor se denomina transacción o conversación <b>DHCP</b>. El cliente recibe una <b>concesión o alquiler</b> de IP por un tiempo determinado y solicita una renovación al transcurrir el 50% de dicho periodo.</p>
+                
+                <h3>Diagrama del Flujo <b>DORA</b> (Discovery, Offer, Request, Acknowledge)</h3>
+                <div class="diagram-flow">
+                    <div class="flow-step"><span class="flow-role">Cliente</span><b>1. DHCPDISCOVER</b>: Envía un mensaje de difusión (*broadcast*) a 255.255.255.255 para localizar servidores, usando la IP de origen 0.0.0.0.</div>
+                    <div class="flow-step"><span class="flow-role">Servidor</span><b>2. DHCPOFFER</b>: Responde con una oferta de parámetros de configuración al cliente (también por *broadcast* a 255.255.255.255).</div>
+                    <div class="flow-step"><span class="flow-role">Cliente</span><b>3. DHCPREQUEST</b>: Mensaje de difusión para aceptar la oferta, confirmar la IP, o extender el contrato de concesión. La IP de origen sigue siendo 0.0.0.0.</div>
+                    <div class="flow-step"><span class="flow-role">Servidor</span><b>4. DHCPACK</b>: Mensaje de confirmación y cierre (*broadcast*) que indica los parámetros definitivos (IP, máscara, puerta de enlace, tiempo de concesión).</div>
+                </div>
+
+                <p><b>DHCP</b> utiliza los puertos <b>UDP 67</b> (Servidor) y <b>UDP 68</b> (Cliente).</p>
+            </section>
+
+            <section id="admin">
+                <h2>3. Métodos y Conceptos de Administración de IP</h2>
+
+                <h3>Métodos de Asignación de IP</h3>
+                <ol class="key-list">
+                    <li><b>Asignación Dinámica</b>: La IP se asigna al cliente por un tiempo limitado (<b>lease time</b>). Al expirar, se revoca y la dirección puede ser reasignada. (Uso más común).</li>
+                    <li><b>Asignación Automática</b>: Se asigna una dirección IP <b>permanente</b> al cliente en el primer contacto, la cual no puede ser reutilizada.</li>
+                    <li><b>Asignación Manual (o Estática)</b>: El administrador establece manualmente la IP en el servidor, y <b>DHCP</b> solo la transmite al cliente. Esto se usa para <b>reservas</b>, asociando la <b>dirección MAC</b> del dispositivo (ej. una impresora) a una IP estática dentro del <b>scope</b>.</li>
+                </ol>
+
+                <h3>Conceptos Fundamentales <b>DHCP</b></h3>
+                <div class="card">
+                    <ul class="key-list">
+                        <li><b>Ámbito (Scope)</b>: Agrupamiento administrativo de clientes de una subred que usan <b>DHCP</b>.</li>
+                        <li><b>Rango (Range)</b>: El grupo de direcciones IP que el servidor puede conceder a los clientes (ej., de 192.168.0.1 a 192.168.0.254).</li>
+                        <li><b>Exclusiones</b>: Direcciones IP que pertenecen al rango, pero que no serán asignadas a los clientes.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="dhcpv6">
+                <h2>4. DHCP para IPv6 (DHCPv6)</h2>
+                <p>DHCPv6 introduce cambios significativos, usando la comunicación <b>multicast</b> y el <b>DUID</b> como identificador de host.</p>
+                
+                <h3>Imagen Simulada: Comparativa DHCPv4 vs. DHCPv6</h3>
+                <div class="diagram-flow">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Characteristic</th>
+                                <th>DHCPv4</th>
+                                <th>DHCPv6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Tipo de dirección para descubrimiento</td>
+                                <td>Broadcast</td>
+                                <td><b>Multicast</b></td>
+                            </tr>
+                            <tr>
+                                <td>Acrónimo Transacción</td>
+                                <td>DORA (Discovery, Offer, Request, Acknowledge)</td>
+                                <td><b>SARR</b> (Solicit, Advertise, Request, Reply)</td>
+                            </tr>
+                            <tr>
+                                <td>Identificador de Host</td>
+                                <td>MAC address</td>
+                                <td><b>DUID</b></td>
+                            </tr>
+                            <tr>
+                                <td>Puerta de Enlace (Gateway)</td>
+                                <td>Obtenida del servidor</td>
+                                <td>Proporcionada por <b>RA</b> (Router Advertisement)</td>
+                            </tr>
+                            <tr>
+                                <td>Puerto de Origen/Destino (UDP)</td>
+                                <td>68 / 67</td>
+                                <td>link-local, 546 / ff02::1:2, 547</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Conceptos Clave DHCPv6:</h3>
+                <ul class="key-list">
+                    <li><b>DUID (DHCP Unique Identifier)</b>: Usado para identificar de forma única clientes y servidores DHCPv6, en lugar de la dirección MAC. Es de longitud variable y se establece en el arranque (<b>time</b>).</li>
+                    <li><b>Identity Association (IA)</b>: Mecanismo utilizado por el servidor DHCPv6 para identificar y administrar conjuntos de direcciones asignadas (ej., <b>IA_NA</b> para no temporales y <b>IA_PD</b> para delegación de prefijo).</li>
+                    <li><b>Stateful DHCPv6</b>: La dirección IPv6 y las opciones adicionales se obtienen a través del servidor DHCPv6.</li>
+                    <li><b>Stateless DHCPv6</b>: La dirección IPv6 se obtiene mediante SLAAC, pero las opciones adicionales (como DNS) se obtienen a través del servidor DHCPv6.</li>
+                </ul>
+            </section>
+            
+            <section id="seguridad">
+                <h2>5. DHCP Relay, Seguridad y Redundancia</h2>
+
+                <h3>DHCP Relay: Comunicación entre Redes</h3>
+                <p>Si el cliente está en una red diferente a la del servidor <b>DHCP</b>, el <b>router</b> intermediario debe configurarse como <b>DHCP Relay</b> para reenviar la solicitud de <b>broadcast</b> (DHCPDISCOVER) al servidor. El <b>DHCP Relay</b> puede utilizar la <b>Opción 82</b> para insertar información sobre la ubicación del cliente, protegiendo contra ataques de suplantación (<b>spoofing</b>).</p>
+
+                <h3>Ataques y Prevención</h3>
+                <p>El ataque de <b>Agotamiento DHCP (DHCP Starvation)</b> es un ataque de denegación de servicio (DoS) en el que un atacante inunda el servidor con peticiones <b>DHCP</b> usando diferentes direcciones MAC. Esto agota el espacio de direcciones IP asignables, impidiendo que clientes legítimos obtengan una IP.</p>
+                <p>La defensa clave es <b>DHCP Snooping</b>, que previene ataques de inanición y suplantación al:
+                <ul class="key-list">
+                    <li>Asegurar que solo los servidores <b>DHCP</b> autorizados puedan responder a las solicitudes <b>DHCP</b>.</li>
+                    <li>Limitar la intensidad de las solicitudes de <b>DHCP</b> en una interfaz para prevenir el agotamiento de <b>DHCP</b>.</li>
+                </ul>
+
+                <h3>Estrategias de Redundancia y Alta Disponibilidad</h3>
+                <p>Para distribuir la carga y aumentar la tolerancia a fallos, se usan múltiples servidores <b>DHCP</b>:</p>
+                <ul class="key-list">
+                    <li><b>Regla 80/20</b>: Distribuye el 80% de las direcciones a un servidor (principal) y el <b>20%</b> restante a un segundo servidor (secundario). Es ideal cuando el servidor principal es local y el secundario está en una subred remota (WAN).</li>
+                    <li><b>Configuración 50/50</b>: Ambos servidores comparten la carga por igual (50% del rango cada uno). Es preferible para una <b>red interna</b> (mismo sitio), ofreciendo gran tolerancia a fallos.</li>
+                    <li><b>Failover</b>: En Windows Server, el *failover* activo/activo es el método "nuevo", que funciona bien para alta disponibilidad.</li>
+                </ul>
+            </section>
+
+        </main>
+    </div>
+</body>
+</html>
